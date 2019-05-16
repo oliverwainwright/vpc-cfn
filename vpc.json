@@ -367,6 +367,27 @@
           "DestinationCidrBlock": "0.0.0.0/0",
           "GatewayId": { "Ref": "InternetGateway" }
         }
+      },
+      "RouteAssociationPublicSubnetA": {
+        "Type": "AWS::EC2::SubnetRouteTableAssociation",
+        "Properties": {
+          "SubnetId": { "Ref": "PublicSubnetA" },
+          "RouteTableId": { "Ref": "PublicRouteTable" }
+        }
+      },
+      "RouteAssociationPublicSubnetB": {
+        "Type": "AWS::EC2::SubnetRouteTableAssociation",
+        "Properties": {
+          "SubnetId": { "Ref": "PublicSubnetB" },
+          "RouteTableId": { "Ref": "PublicRouteTable" }
+        }
+      },
+      "RouteAssociationPublicSubnetC": {
+        "Type": "AWS::EC2::SubnetRouteTableAssociation",
+        "Properties": {
+          "SubnetId": { "Ref": "PublicSubnetC" },
+          "RouteTableId": { "Ref": "PublicRouteTable" }
+        }
       }
     },  
     "Outputs": {

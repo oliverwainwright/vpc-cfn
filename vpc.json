@@ -63,7 +63,7 @@
         "Properties": {
           "VpcId": { "Ref": "VPC" },
           "CidrBlock": {
-            "Fn::Sub": "10.${ParamVPCCidrRange}.0.0/20",
+            "Fn::Sub": "10.${ParamVPCCidrRange}.0.0/20"
           },
           "Ipv6CidrBlock": {
             "Fn::Select" : [
@@ -106,7 +106,7 @@
         "Properties": {
           "VpcId": { "Ref": "VPC" },
           "CidrBlock": {
-            "Fn::Sub": "10.${ParamVPCCidrRange}.16.0/21",
+            "Fn::Sub": "10.${ParamVPCCidrRange}.16.0/21"
           },
           "AvailabilityZone": {
             "Fn::Select": [
@@ -130,7 +130,7 @@
         "Properties": {
           "VpcId": { "Ref": "VPC" },
           "CidrBlock": {
-            "Fn::Sub": "10.${ParamVPCCidrRange}.24.0/222",
+            "Fn::Sub": "10.${ParamVPCCidrRange}.24.0/222"
           },
           "AvailabilityZone": {
             "Fn::Select": [
@@ -155,7 +155,7 @@
         "Properties": {
           "VpcId": { "Ref": "VPC" },
           "CidrBlock": {
-            "Fn::Sub": "10.${ParamVPCCidrRange}.32.0/20",
+            "Fn::Sub": "10.${ParamVPCCidrRange}.32.0/20"
           },
           "Ipv6CidrBlock": { 
             "Fn::Select" : [
@@ -198,7 +198,7 @@
         "Properties": {
           "VpcId": { "Ref": "VPC" },
           "CidrBlock": {
-            "Fn::Sub": "10.${ParamVPCCidrRange}.48.0/21",
+            "Fn::Sub": "10.${ParamVPCCidrRange}.48.0/21"
           },
           "AvailabilityZone": {
             "Fn::Select": [
@@ -222,7 +222,7 @@
         "Properties": {
           "VpcId": { "Ref": "VPC" },
           "CidrBlock": {
-            "Fn::Sub": "10.${ParamVPCCidrRange}.56.0/22",
+            "Fn::Sub": "10.${ParamVPCCidrRange}.56.0/22"
           },
           "AvailabilityZone": {
             "Fn::Select": [
@@ -247,7 +247,7 @@
         "Properties": {
           "VpcId": { "Ref": "VPC" },
           "CidrBlock": {
-            "Fn::Sub": "10.${ParamVPCCidrRange}.64.0/20",
+            "Fn::Sub": "10.${ParamVPCCidrRange}.64.0/20"
           },
           "Ipv6CidrBlock": { 
             "Fn::Select" : [
@@ -290,7 +290,7 @@
         "Properties": {
           "VpcId": { "Ref": "VPC" },
           "CidrBlock": {
-            "Fn::Sub": "10.${ParamVPCCidrRange}.80.0/21",
+            "Fn::Sub": "10.${ParamVPCCidrRange}.80.0/21"
           },
           "AvailabilityZone": {
             "Fn::Select": [
@@ -314,7 +314,7 @@
         "Properties": {
           "VpcId": { "Ref": "VPC" },
           "CidrBlock": {
-            "Fn::Sub": "10.${ParamVPCCidrRange}.88.0/22",
+            "Fn::Sub": "10.${ParamVPCCidrRange}.88.0/22"
           },
           "AvailabilityZone": {
             "Fn::Select": [

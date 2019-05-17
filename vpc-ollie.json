@@ -20,8 +20,8 @@
         "Default": 0,
         "MinValue": 0,
         "MaxValue": 255,
-        "Description": "The 'x' in 10.x.0.0/16.  Can be 0-255",
-        "ConstraintDescription": "Should be a number between 0-255"
+        "Description": "The x in 10.x.0.0/16 can be 0 - 255",
+        "ConstraintDescription": "should be a number between 0 and 255"
       }
     },
     "Conditions": {
@@ -42,7 +42,7 @@
           "Tags": [
             { "Key": "Owner", "Value": { "Ref": "ParamAuthorName" } },
             { "Key": "Name", "Value": { "Fn::Sub": "${AWS::StackName}-vpc" } }
-          ]
+          ]         
         }
       },
       "VPCIPv6CidrBlock": {
@@ -81,11 +81,11 @@
             ]
           },
           "AvailabilityZone": {
-            "Fn::Select": ["0", { "Fn::GetAZs": "" }]
+            "Fn::Select": [ "0", { "Fn::GetAZs": "" }]
           },
           "Tags": [
-            {
-              "Key": "Name",
+            { 
+              "Key": "Name", 
               "Value": { "Fn::Sub": "${AWS::StackName}-public-a" }
             },
             { "Key": "Owner", "Value": { "Ref": "ParamAuthorName" } }
@@ -95,56 +95,47 @@
       "PrivateSubnetA": {
         "Type": "AWS::EC2::Subnet",
         "Properties": {
-          "VpcId": {
-            "Ref": "VPC"
-          },
+          "VpcId": { "Ref": "VPC" },
           "CidrBlock": {
             "Fn::Sub": "10.${ParamVPCCidrRange}.16.0/21"
           },
           "AvailabilityZone": {
             "Fn::Select": [
-              "0",
+              "0", 
               { "Fn::GetAZs": "" }
             ]
           },
           "Tags": [
-            {
-              "Key": "Name",
-              "Value": {
-                "Fn::Sub": "${AWS::StackName}-private-a"
-              }
+            { 
+              "Key": "Name", 
+              "Value": { "Fn::Sub": "${AWS::StackName}-private-a" }
             },
-            { "Key": "Owner",
-              "Value": { "Ref": "ParamAuthorName" }
+            { "Key": "Owner", 
+              "Value": { "Ref": "ParamAuthorName" } 
             }
           ]
         }
       },
-      "DbSubnetA": {
+      "DBSubnetA": {
         "Type": "AWS::EC2::Subnet",
         "Properties": {
-          "VpcId": {
-            "Ref": "VPC"
-          },
+          "VpcId": { "Ref": "VPC" },
           "CidrBlock": {
-            "Fn::Sub": "10.${ParamVPCCidrRange}.24.0/22"
+            "Fn::Sub": "10.${ParamVPCCidrRange}.24.0/222"
           },
           "AvailabilityZone": {
             "Fn::Select": [
-              "0",
+              "0", 
               { "Fn::GetAZs": "" }
             ]
           },
           "Tags": [
-            {
-              "Key": "Name",
-              "Value": {
-                "Fn::Sub": "${AWS::StackName}-db-a"
-              }
+            { 
+              "Key": "Name", 
+              "Value": { "Fn::Sub": "${AWS::StackName}-db-a" }
             },
-            {
-              "Key": "Owner",
-              "Value": { "Ref": "ParamAuthorName" }
+            { "Key": "Owner", 
+              "Value": { "Ref": "ParamAuthorName" } 
             }
           ]
         }
@@ -153,9 +144,7 @@
         "Type": "AWS::EC2::Subnet",
         "DependsOn": "VPCIPv6CidrBlock",
         "Properties": {
-          "VpcId": {
-            "Ref": "VPC"
-          },
+          "VpcId": { "Ref": "VPC" },
           "CidrBlock": {
             "Fn::Sub": "10.${ParamVPCCidrRange}.32.0/20"
           },
@@ -180,20 +169,17 @@
           },
           "AvailabilityZone": {
             "Fn::Select": [
-              "1",
+              "1", 
               { "Fn::GetAZs": "" }
             ]
           },
           "Tags": [
-            {
-              "Key": "Name",
-              "Value": {
-                "Fn::Sub": "${AWS::StackName}-public-b"
-              }
+            { 
+              "Key": "Name", 
+              "Value": { "Fn::Sub": "${AWS::StackName}-public-b" }
             },
-            {
-              "Key": "Owner",
-              "Value": { "Ref": "ParamAuthorName" }
+            { "Key": "Owner", 
+              "Value": { "Ref": "ParamAuthorName" } 
             }
           ]
         }
@@ -201,57 +187,47 @@
       "PrivateSubnetB": {
         "Type": "AWS::EC2::Subnet",
         "Properties": {
-          "VpcId": {
-            "Ref": "VPC"
-          },
+          "VpcId": { "Ref": "VPC" },
           "CidrBlock": {
             "Fn::Sub": "10.${ParamVPCCidrRange}.48.0/21"
           },
           "AvailabilityZone": {
             "Fn::Select": [
-              "1",
+              "1", 
               { "Fn::GetAZs": "" }
             ]
           },
           "Tags": [
-            {
-              "Key": "Name",
-              "Value": {
-                "Fn::Sub": "${AWS::StackName}-private-b"
-              }
+            { 
+              "Key": "Name", 
+              "Value": { "Fn::Sub": "${AWS::StackName}-prvate-b" }
             },
-            {
-              "Key": "Owner",
-              "Value": { "Ref": "ParamAuthorName" }
+            { "Key": "Owner", 
+              "Value": { "Ref": "ParamAuthorName" } 
             }
           ]
         }
       },
-      "DbSubnetB": {
+      "DBSubnetB": {
         "Type": "AWS::EC2::Subnet",
         "Properties": {
-          "VpcId": {
-            "Ref": "VPC"
-          },
+          "VpcId": { "Ref": "VPC" },
           "CidrBlock": {
             "Fn::Sub": "10.${ParamVPCCidrRange}.56.0/22"
           },
           "AvailabilityZone": {
             "Fn::Select": [
-              "1",
+              "1", 
               { "Fn::GetAZs": "" }
             ]
           },
           "Tags": [
-            {
-              "Key": "Name",
-              "Value": {
-                "Fn::Sub": "${AWS::StackName}-db-b"
-              }
+            { 
+              "Key": "Name", 
+              "Value": { "Fn::Sub": "${AWS::StackName}-db-b" }
             },
-            {
-              "Key": "Owner",
-              "Value": { "Ref": "ParamAuthorName" }
+            { "Key": "Owner", 
+              "Value": { "Ref": "ParamAuthorName" } 
             }
           ]
         }
@@ -260,13 +236,11 @@
         "Type": "AWS::EC2::Subnet",
         "DependsOn": "VPCIPv6CidrBlock",
         "Properties": {
-          "VpcId": {
-            "Ref": "VPC"
-          },
+          "VpcId": { "Ref": "VPC" },
           "CidrBlock": {
             "Fn::Sub": "10.${ParamVPCCidrRange}.64.0/20"
           },
-          "Ipv6CidrBlock": {
+          "Ipv6CidrBlock": { 
             "Fn::Select" : [
               2, 
               {
@@ -287,20 +261,17 @@
           },
           "AvailabilityZone": {
             "Fn::Select": [
-              "2",
+              "2", 
               { "Fn::GetAZs": "" }
             ]
           },
           "Tags": [
-            {
-              "Key": "Name",
-              "Value": {
-                "Fn::Sub": "${AWS::StackName}-public-c"
-              }
+            { 
+              "Key": "Name", 
+              "Value": { "Fn::Sub": "${AWS::StackName}-public-c" }
             },
-            {
-              "Key": "Owner",
-              "Value": { "Ref": "ParamAuthorName" }
+            { "Key": "Owner", 
+              "Value": { "Ref": "ParamAuthorName" } 
             }
           ]
         }
@@ -308,57 +279,47 @@
       "PrivateSubnetC": {
         "Type": "AWS::EC2::Subnet",
         "Properties": {
-          "VpcId": {
-            "Ref": "VPC"
-          },
+          "VpcId": { "Ref": "VPC" },
           "CidrBlock": {
             "Fn::Sub": "10.${ParamVPCCidrRange}.80.0/21"
           },
           "AvailabilityZone": {
             "Fn::Select": [
-              "2",
+              "2", 
               { "Fn::GetAZs": "" }
             ]
           },
           "Tags": [
-            {
-              "Key": "Name",
-              "Value": {
-                "Fn::Sub": "${AWS::StackName}-private-c"
-              }
+            { 
+              "Key": "Name", 
+              "Value": { "Fn::Sub": "${AWS::StackName}-private-c" }
             },
-            {
-              "Key": "Owner",
-              "Value": { "Ref": "ParamAuthorName" }
+            { "Key": "Owner", 
+              "Value": { "Ref": "ParamAuthorName" } 
             }
           ]
         }
       },
-      "DbSubnetC": {
+      "DBSubnetC": {
         "Type": "AWS::EC2::Subnet",
         "Properties": {
-          "VpcId": {
-            "Ref": "VPC"
-          },
+          "VpcId": { "Ref": "VPC" },
           "CidrBlock": {
             "Fn::Sub": "10.${ParamVPCCidrRange}.88.0/22"
           },
           "AvailabilityZone": {
             "Fn::Select": [
-              "2",
+              "2", 
               { "Fn::GetAZs": "" }
             ]
           },
           "Tags": [
-            {
-              "Key": "Name",
-              "Value": {
-                "Fn::Sub": "${AWS::StackName}-db-c"
-              }
+            { 
+              "Key": "Name", 
+              "Value": { "Fn::Sub": "${AWS::StackName}-db-c" }
             },
-            {
-              "Key": "Owner",
-              "Value": { "Ref": "ParamAuthorName" }
+            { "Key": "Owner", 
+              "Value": { "Ref": "ParamAuthorName" } 
             }
           ]
         }
@@ -366,7 +327,7 @@
       "PublicRouteTable": {
         "Type": "AWS::EC2::RouteTable",
         "Properties": {
-          "VpcId": { "Ref": "VPC" },
+          "VpcId": { "Ref": "VPC"},
           "Tags": [
             { "Key": "Owner", "Value": { "Ref": "ParamAuthorName" } },
             { "Key": "Name", "Value": { "Fn::Sub": "${AWS::StackName}-public-route-table" } }
@@ -383,9 +344,9 @@
         }
       },
       "InternetGatewayAttachment": {
-        "Type": "AWS::EC2::VPCGatewayAttachment",
+        "Type": "AWS::EC2::InternetGatewayAttachment",
         "Properties": {
-          "VpcId": { "Ref": "VPC" },
+          "VpcId": { "Ref": "VPC"},
           "InternetGatewayId": { "Ref": "InternetGateway" }
         }
       },
@@ -395,9 +356,7 @@
         "Properties": {
           "RouteTableId": { "Ref": "PublicRouteTable" },
           "DestinationCidrBlock": "0.0.0.0/0",
-          "GatewayId": {
-            "Ref": "InternetGateway"
-          }
+          "GatewayId": { "Ref": "InternetGateway" }
         }
       },
       "RouteAssociationPublicSubnetA": {
@@ -424,7 +383,7 @@
       "PrivateRouteTable": {
         "Type": "AWS::EC2::RouteTable",
         "Properties": {
-          "VpcId": { "Ref": "VPC" },
+          "VpcId": { "Ref": "VPC"},
           "Tags": [
             { "Key": "Owner", "Value": { "Ref": "ParamAuthorName" } },
             { "Key": "Name", "Value": { "Fn::Sub": "${AWS::StackName}-private-route-table" } }
@@ -451,7 +410,7 @@
             { "Key": "Name", "Value": { "Fn::Sub": "${AWS::StackName}-nat-gw" } }
           ]
         }
-      },
+      }, 
       "NatRoute": {
         "Type": "AWS::EC2::Route",
         "Condition": "CreateNatGateway",

@@ -1,0 +1,25 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Description": "Production Ready VPC",
+	"Metadata": {
+		"Author": { "Ref": "ParamAuthorName" }
+	},
+	"Paramters": {
+		"ParamVPCStackName": {
+		"Type": "String",
+		"Description": "The stack name of a VPC stack that exports the VPC ID as stackname-vpc-id"
+		}
+	},
+	"Resources": {
+		"ExampleSecurityGroup": {
+			"Type": "AWS::EC2::SecurityGroup",
+			"Properties": {
+				"GroupName": "example-sg",
+				"GroupDescription": "sg using imported value",
+				"VpcId": {
+					"Fn::Sub": "${ParamVPCStackName}-vpc-id"
+				}
+			}
+		}
+	}
+}

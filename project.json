@@ -1,0 +1,250 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Production Ready VPC",
+    "Metadata": {
+      "Author": { "Ref": "ParamAuthorName" }
+    },
+    "Parameters": {
+      "ParamAuthorName": {
+        "Type": "String",
+        "Description": "Owner of the CFN Template."
+      },
+    "ParamVPCCidrRange": {
+        "Type": "Number",
+        "Default": 0,
+        "MinValue": 0,
+        "MaxValue": 255,
+        "Description": "The 'x' in 10.x.0.0/16.  Can be 0-255",
+        "ConstraintDescription": "Should be a number between 0-255"
+      }
+    },
+    "Conditions": {
+      "CreateNatGateway": {
+        "Fn::Equals": [{ "Ref": "ParamNatGateway" }, "true"]
+      }
+    },
+    "Resources": {
+      "VPC": {
+        "Type": "AWS::EC2::VPC",
+        "Properties": {
+          "CidrBlock": {
+            "Fn::Sub": "10.${ParamVPCCidrRange}.0.0/16"
+          },
+          "EnableDnsSupport": true,
+          "EnableDnsHostnames": true,
+          "InstanceTenancy": "default",
+          "Tags": [
+            { "Key": "Owner", "Value": { "Ref": "ParamAuthorName" } },
+            { "Key": "Name", "Value": { "Fn::Sub": "${AWS::StackName}-vpc" } }
+          ]
+        }
+      },
+      "PublicSubnetA": {
+        "Type": "AWS::EC2::Subnet",
+        "Properties": {
+          "VpcId": { "Ref": "VPC" },
+          "CidrBlock": {
+            "Fn::Sub": "10.${ParamVPCCidrRange}.0.0/20"
+          },
+          "AvailabilityZone": {
+            "Fn::Select": ["0", { "Fn::GetAZs": "" }]
+          },
+          "Tags": [
+            {
+              "Key": "Name",
+              "Value": { "Fn::Sub": "${AWS::StackName}-public-a" }
+            },
+            { "Key": "Owner", "Value": { "Ref": "ParamAuthorName" } }
+          ]
+        }
+      },
+      "PublicRouteTable": {
+        "Type": "AWS::EC2::RouteTable",
+        "Properties": {
+          "VpcId": { "Ref": "VPC" },
+          "Tags": [
+            { "Key": "Owner", "Value": { "Ref": "ParamAuthorName" } },
+            { "Key": "Name", "Value": { "Fn::Sub": "${AWS::StackName}-public-route-table" } }
+          ]
+        }
+      },
+      "InternetGateway": {
+        "Type": "AWS::EC2::InternetGateway",
+        "Properties": {
+          "Tags": [
+            { "Key": "Owner", "Value": { "Ref": "ParamAuthorName" } },
+            { "Key": "Name", "Value": { "Fn::Sub": "${AWS::StackName}-igw" } }
+          ]
+        }
+      },
+      "InternetGatewayAttachment": {
+        "Type": "AWS::EC2::VPCGatewayAttachment",
+        "Properties": {
+          "VpcId": { "Ref": "VPC" },
+          "InternetGatewayId": { "Ref": "InternetGateway" }
+        }
+      },
+      "InternetRoute": {
+        "Type": "AWS::EC2::Route",
+        "DependsOn": "InternetGatewayAttachment",
+        "Properties": {
+          "RouteTableId": { "Ref": "PublicRouteTable" },
+          "DestinationCidrBlock": "0.0.0.0/0",
+          "GatewayId": {
+            "Ref": "InternetGateway"
+          }
+        }
+      },
+      "RouteAssociationPublicSubnetA": {
+        "Type": "AWS::EC2::SubnetRouteTableAssociation",
+        "Properties": {
+          "SubnetId": { "Ref": "PublicSubnetA" },
+          "RouteTableId": { "Ref": "PublicRouteTable" }
+        }
+      }
+    },
+    "BastionSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Security group for Bastion instance",
+        "VpcId": { "Ref": "VPC" },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Bastion Instance Security Group"
+          },
+          {
+            "Key": "Owner",
+            "Value": { "Ref": "ParamAuthorName" }
+          }
+        ],
+        "AliceSshSecurityGroupIngress": [
+          {
+            "IpProtocol":"tcp",
+            "ToPort":"22",
+            "CidrIp": "204.13.56.3"
+          }
+        ],
+        "AliceHttpsSecurityGroupIngress": [
+          {
+            "IpProtocol":"tcp",
+            "ToPort":"443",
+            "CidrIp": "204.13.56.3"
+          }
+        ],
+        "BobSshSecurityGroupIngress": [
+          {
+            "IpProtocol":"tcp",
+            "ToPort":"22",
+            "CidrIp": "176.33.122.64"
+          }
+        ],
+        "BobHttpsSecurityGroupIngress": [
+          {
+            "IpProtocol":"tcp",
+            "ToPort":"22",
+            "CidrIp": "176.33.122.64"
+          }
+        ]
+      }
+    },
+    "BastionInstance": {
+      "Type": "AWS::EC2::Instance",
+      "Metadata": {
+        "AWS::CloudFormation::Init": {
+          "commands": {
+              "AddUserAlice": {
+                "command": "sudo adduser alice",
+                "cwd": "~"
+              },
+              "MkdirSshAlice": {
+                "command": "sudo mkdir /home/alice/.ssh && sudo chmod 700 /home/alice/.ssh",
+                "cwd": "~"
+              },
+              "AuthKeysSshAlice": {
+                "command": "sudo touch /home/alice/.ssh/authorized_keys && sudo chmod 600 /home/alice/.ssh/authorized_keys",
+                "cwd": "~"
+              },
+              "AddUserBob": {
+                "command": "sudo adduser bob",
+                "cwd": "~"
+              },
+              "MkdirSshBob": {
+                "command": "sudo mkdir /home/bob/.ssh && sudo chmod 700 /home/bob/.ssh",
+                "cwd": "~"
+              },
+              "AuthKeysSshBob": {
+                "command": "sudo touch /home/bob/.ssh/authorized_keys && sudo chmod 600 /home/bob/.ssh/authorized_keys",
+                "cwd": "~"
+              }
+            } 
+          },
+          "files": {
+            "/home/alice/.ssh/authorized_keys": {
+              "content": {
+                  "Fn::Join": ["", [ 
+                    "---- BEGIN SSH2 PUBLIC KEY ----",
+                    "AAAAB3NzaC1yc2EAAAADAQABAAABAQCC4canZ31bwnB8ifrlIVb/DfeFOfMr923W",
+                    "Jdo07HgWen04WeqwBevouuBY5f57x/Lkr1pE9sRB3Pe48/mMRUzs47fnwQES+k6Y",
+                    "mY79z2V1HBesDSReIRAocvq/EzljBx4UBbhVA1MNI1dGyrPOeNDZyT6cvHEWTRu2",
+                    "F+1PVe0tTm9AJGBO3RD7osq/fR+HmojhY/Jn+Wr/uECWJtzEx4k7yVeXlTwKv8HD",
+                    "I1hmuVv9YaShUO4FYrIlW+ChUESq95OUX9/FZhpynjkhfmBUD3EUJ4ysETOFUbuk",
+                    "A/Sut8DtlwBK6GmD9KjHf0Lb4ugX2N1RA922GRWC0pnysBorN0x9",
+                    "---- END SSH2 PUBLIC KEY ----" ]]
+              },
+              "mode": "000600",
+              "owner": "alice",
+              "group": "alice"
+            },
+            "/home/bob/.ssh/authorized_keys": {
+              "content": {
+                  "Fn::Join": ["", [ 
+                    "---- BEGIN SSH2 PUBLIC KEY ----",
+                    "AAAAB3NzaC1yc2EAAAADAQABAAABAQCC4canZ31bwnB8ifrlIVb/DfeFOfMr923W",
+                    "Jdo07HgWen04WeqwBevouuBY5f57x/Lkr1pE9sRB3Pe48/mMRUzs47fnwQES+k6Y",
+                    "mY79z2V1HBesDSReIRAocvq/EzljBx4UBbhVA1MNI1dGyrPOeNDZyT6cvHEWTRu2",
+                    "F+1PVe0tTm9AJGBO3RD7osq/fR+HmojhY/Jn+Wr/uECWJtzEx4k7yVeXlTwKv8HD",
+                    "I1hmuVv9YaShUO4FYrIlW+ChUESq95OUX9/FZhpynjkhfmBUD3EUJ4ysETOFUbuk",
+                    "A/Sut8DtlwBK6GmD9KjHf0Lb4ugX2N1RA922GRWC0pnysBorN0x9",
+                    "---- END SSH2 PUBLIC KEY ----" ]]
+              },
+              "mode": "000600",
+              "owner": "bob",
+              "group": "bob"
+            }
+          }
+        }
+      },
+      "Properties": {
+        "ImageId": "ami-035b3c7efe6d061d5",
+        "InstanceType": "t2.micro",
+        "KeyName": "alice-bob-key-pair",
+        "SubnetId": { "Ref": "PublicSubnetA" },
+        "SecurityGroupIds": [
+          { "Ref": "BastionSecurityGroup" }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {
+              "Fn::Sub": "${AWS::StackName}-bastion"
+            }
+          },
+          {
+            "Key": "Owner",
+            "Value": { "Ref": "ParamAuthorName" }
+          }
+        ]
+      },
+    "Outputs": {
+      "VPCId": {
+        "Description": "VPC Id",
+        "Value": { "Ref": "VPC" },
+        "Export": {
+          "Name": {
+            "Fn::Sub": "${AWS::StackName}-vpc-id"
+          }
+        }
+      }
+    }
+  }
